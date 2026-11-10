@@ -1,0 +1,33 @@
+{
+    "name": "wazobiamail/wazobiamail-wordpress",
+    "description": "Official WazobiaMail WordPress Plugin - Transactional email delivery, automatic site domain registration, deliverability tracking, and DNS inspection",
+    "type": "wordpress-plugin",
+    "license": "MIT",
+    "homepage": "https://wazobiamail.com",
+    "authors": [
+        {
+            "name": "Bowofade Oyerinde",
+            "email": "info@bonifadetechnologies.com",
+            "homepage": "https://github.com/WazobiaMail"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6 || ^10.0 || ^11.0"
+    },
+    "autoload": {
+        "classmap": [
+            "includes/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "WazobiaMail\\WordPress\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}
