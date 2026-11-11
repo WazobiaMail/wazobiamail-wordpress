@@ -85,7 +85,7 @@ class ApiClientTest extends TestCase {
         $this->assertEquals('POST', $req['args']['method']);
         $this->assertEquals('wzbm_live_secretkey_999', $req['args']['headers']['X-API-Key']);
         $this->assertEquals('idemp_key_101', $req['args']['headers']['Idempotency-Key']);
-        $this->assertStringContainsString('wazobiamail-wordpress/0.1.0', $req['args']['headers']['User-Agent']);
+        $this->assertStringContainsString('wazobiamail-wordpress/0.1.1', $req['args']['headers']['User-Agent']);
 
         $body = json_decode($req['args']['body'], true);
         $this->assertEquals('Store <orders@example.com>', $body['content']['from']);

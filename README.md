@@ -7,7 +7,7 @@ transport with the WazobiaMail API — a Resend alternative that also supports
 SMTP. Start free with 3,000 emails/month, and automate sending-domain
 registration, DNS verification, attachment uploads, and delivery receipts.
 
-**Version:** 0.1.0  
+**Version:** 0.1.1  
 **Requires WordPress:** 5.8 or newer  
 **Requires PHP:** 7.4 or newer  
 **License:** MIT
@@ -192,7 +192,7 @@ WazobiaMail integrates with standard WordPress hooks:
 | `wp_mail_failed` | action | Fired with a `WP_Error` when WazobiaMail is unconfigured or a send fails. |
 | `plugin_action_links_{basename}` | filter | Adds the **Settings** link on the Plugins screen. |
 
-The plugin exposes no custom WazobiaMail filters in 0.1.0. Use `pre_wp_mail` to
+The plugin exposes no custom WazobiaMail filters in 0.1.1. Use `pre_wp_mail` to
 conditionally route, alter, or short-circuit messages before WazobiaMail builds
 its request.
 

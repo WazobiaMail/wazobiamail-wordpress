@@ -1,10 +1,10 @@
 === WazobiaMail - Transactional Email & Deliverability ===
-Contributors: wazobiamail
+Contributors: oyenet1
 Tags: transactional email, email delivery, dns, deliverability, wp_mail
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -96,16 +96,52 @@ The send response's tracking ID is stored in the local delivery log. Open the
 **Delivery Logs** tab to view recent receipts, or disable logging on the settings
 tab.
 
-== Screenshots ==
+== External services ==
 
-1. General API and sender settings, including the masked API key, From defaults,
-   dispatch mode, and gateway URL.
-2. Site Domain & DNS tab with the detected domain, registration button, and
-   required DNS record checklist.
-3. Send Test Email tab used to verify API credentials and delivery.
-4. Delivery Logs tab with timestamps, recipients, tracking IDs, and statuses.
+This plugin connects to the WazobiaMail transactional email service to deliver
+the messages WordPress generates.
+
+* **Service:** WazobiaMail
+* **API endpoint:** `https://app.wazobiamail.com/api/v1`
+* **What it does:** sends transactional email, registers the site domain, reads
+  DNS requirements and verification status, uploads attachments, and reads
+  delivery/tracking receipts.
+* **Data sent:** the API key, sender and recipient addresses, CC/BCC, Reply-To,
+  subject, HTML/text bodies, attachment filenames and contents, the site domain,
+  and the DNS/tracking queries needed for the requested operation.
+* **When data is sent:** when `wp_mail()` is dispatched while the plugin is
+  Active, when an administrator saves settings, registers or verifies the site
+  domain, sends a test email, or uploads an attachment. No email data is sent
+  until an API key is saved and dispatch is enabled.
+* **Account required:** yes. The plugin does not work without a WazobiaMail
+  account and API key.
+* **Terms of service:** https://wazobiamail.com/terms/
+* **Privacy policy:** https://wazobiamail.com/privacy/
+* **Support:** https://docs.wazobiamail.com/
+
+== Privacy ==
+
+WazobiaMail sends the email content and metadata described above to the
+WazobiaMail API so the message can be delivered. The plugin does not add
+analytics, advertising trackers or third-party scripts to your site.
+
+The plugin stores its settings and the latest 50 delivery log entries in the
+WordPress options table (`wazobiamail_options` and
+`wazobiamail_delivery_logs`). Logging can be disabled in settings. Uninstalling
+the plugin removes these options for the current site, or for every site on a
+multisite installation. Cached DNS records are stored in a short-lived
+transient and removed on deactivation/uninstall.
+
+See the WazobiaMail privacy policy for how the service processes email data:
+https://wazobiamail.com/privacy/
 
 == Changelog ==
+
+= 0.1.1 =
+* Prepare the WordPress.org submission: uninstall cleanup, external-service and
+  privacy disclosures, plugin icons/banners, and a clean distribution build.
+* Load bundled translations from the plugin `languages` directory.
+* Bump the API client user agent to 0.1.1.
 
 = 0.1.0 =
 * Initial release.
@@ -119,6 +155,9 @@ tab.
 * Add the admin settings screen, test email sender, and delivery log.
 
 == Upgrade Notice ==
+
+= 0.1.1 =
+Metadata and WordPress.org submission preparation; no breaking changes.
 
 = 0.1.0 =
 Initial public release.

@@ -1,0 +1,15 @@
+.git
+.github
+.wordpress-org
+tests
+vendor
+.phpunit.cache
+composer.json
+composer.lock
+phpunit.xml
+README.md
+SUBMISSION.md
+build.sh
+dist
+.gitignore
+.distignore

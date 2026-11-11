@@ -10,7 +10,7 @@ defined('ABSPATH') || exit;
 
 class WazobiaMail_API_Client {
 
-    const VERSION = '0.1.0';
+    const VERSION = '0.1.1';
     const DEFAULT_BASE_URL = 'https://app.wazobiamail.com/api/v1';
     const DEFAULT_TIMEOUT = 30;
 
