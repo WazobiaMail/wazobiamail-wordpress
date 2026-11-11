@@ -1,6 +1,6 @@
 {
     "name": "wazobiamail/wazobiamail-wordpress",
-    "description": "Official WazobiaMail WordPress Plugin - Transactional email delivery, automatic site domain registration, deliverability tracking, and DNS inspection",
+    "description": "Send WordPress email through the WazobiaMail API. WazobiaMail is a Resend alternative that also supports SMTP, with automatic domain setup and delivery receipts.",
     "type": "wordpress-plugin",
     "license": "MIT",
     "homepage": "https://wazobiamail.com",
@@ -29,5 +29,15 @@
     },
     "scripts": {
         "test": "phpunit"
-    }
+    },
+    "keywords": [
+        "wordpress",
+        "wazobiamail",
+        "wp_mail",
+        "transactional-email",
+        "smtp",
+        "deliverability",
+        "resend-alternative",
+        "email-api"
+    ]
 }
