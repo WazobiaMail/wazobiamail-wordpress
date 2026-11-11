@@ -8,7 +8,7 @@ Stable tag: 0.1.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
-Send WordPress email through the WazobiaMail API. WazobiaMail is a Resend alternative that also supports SMTP, with automatic domain setup, DNS verification, URL attachments, and delivery receipts.
+Send WordPress email through the WazobiaMail API. Start free with 3,000 emails/month. A Resend alternative that also supports SMTP, with automatic domain setup, DNS verification, URL attachments, and delivery receipts.
 
 == Description ==
 

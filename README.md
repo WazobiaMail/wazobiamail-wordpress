@@ -2,8 +2,8 @@
 
 Official WazobiaMail WordPress plugin. It replaces the default WordPress mail
 transport with the WazobiaMail API — a Resend alternative that also supports
-SMTP — and automates sending-domain registration, DNS verification, attachment
-uploads, and delivery receipts.
+SMTP. Start free with 3,000 emails/month, and automate sending-domain
+registration, DNS verification, attachment uploads, and delivery receipts.
 
 **Version:** 0.1.0  
 **Requires WordPress:** 5.8 or newer  

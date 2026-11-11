@@ -1,6 +1,6 @@
 {
     "name": "wazobiamail/wazobiamail-wordpress",
-    "description": "Send WordPress email through the WazobiaMail API. WazobiaMail is a Resend alternative that also supports SMTP, with automatic domain setup and delivery receipts.",
+    "description": "Send WordPress email through the WazobiaMail API. Start free with 3,000 emails/month. A Resend alternative that also supports SMTP, with automatic domain setup and delivery receipts.",
     "type": "wordpress-plugin",
     "license": "MIT",
     "homepage": "https://wazobiamail.com",

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       WazobiaMail - Transactional Email & Deliverability
  * Plugin URI:        https://wazobiamail.com
- * Description:       Send WordPress email through the WazobiaMail API. WazobiaMail is a Resend alternative that also supports SMTP, with automatic domain setup, DNS verification, and open/click receipts.
+ * Description:       Send WordPress email through the WazobiaMail API. Start free with 3,000 emails/month. A Resend alternative that also supports SMTP, with automatic domain setup, DNS verification, and open/click receipts.
  * Version:           0.1.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
