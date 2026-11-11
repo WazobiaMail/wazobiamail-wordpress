@@ -34,6 +34,16 @@ registration, DNS verification, attachment uploads, and delivery receipts.
 
 ### Install from a ZIP archive
 
+Composer projects can install it from [Packagist](https://packagist.org/packages/wazobiamail/wazobiamail-wordpress):
+
+```bash
+composer require wazobiamail/wazobiamail-wordpress
+```
+
+With `composer/installers`, the plugin is placed in `wp-content/plugins/wazobiamail`.
+
+Or install the ZIP manually:
+
 1. Download the latest ZIP from [GitHub Releases](https://github.com/WazobiaMail/wazobiamail-wordpress/releases), or build it from this directory.
 2. In WordPress, go to **Plugins → Add New → Upload Plugin**.
 3. Select the ZIP, click **Install Now**, then **Activate**.
@@ -273,7 +283,7 @@ The SDKs below all use the WazobiaMail API; SMTP/legacy clients that need SMTP s
 | PHP | `composer require wazobiamail/wazobiamail-php` | [Packagist](https://packagist.org/packages/wazobiamail/wazobiamail-php) | [GitHub](https://github.com/WazobiaMail/wazobiamail-php) |
 | Laravel | `composer require wazobiamail/wazobiamail-laravel` | [Packagist](https://packagist.org/packages/wazobiamail/wazobiamail-laravel) | [GitHub](https://github.com/WazobiaMail/wazobiamail-laravel) |
 | Rust | `cargo add wazobiamail` | [crates.io](https://crates.io/crates/wazobiamail) | [GitHub](https://github.com/WazobiaMail/wazobiamail-rust) |
-| WordPress | Upload the plugin ZIP | [GitHub releases](https://github.com/WazobiaMail/wazobiamail-wordpress/releases) | [GitHub](https://github.com/WazobiaMail/wazobiamail-wordpress) |
+| WordPress | Upload the plugin ZIP | [Packagist](https://packagist.org/packages/wazobiamail/wazobiamail-wordpress) · [GitHub releases](https://github.com/WazobiaMail/wazobiamail-wordpress/releases) | [GitHub](https://github.com/WazobiaMail/wazobiamail-wordpress) |
 
 ### What each package gives you
 
