@@ -6,7 +6,7 @@ be completed from this machine.
 
 ## What is already prepared
 
-- Plugin header and `Stable tag: 0.1.1`.
+- Plugin header and `Stable tag: 0.1.2`.
 - `readme.txt` with description, installation, FAQ, external-service disclosure,
   privacy section, changelog and upgrade notice.
 - `uninstall.php` that removes settings, delivery logs and cached DNS data
@@ -42,16 +42,17 @@ https://wordpress.org/plugins/plugin-check/
 
 ## 2. Check the contributor name
 
-`readme.txt` currently lists `Contributors: oyenet1`. Replace it with your
-WordPress.org username if different. The submitting account becomes the plugin
-owner.
+`readme.txt` does not list a contributor so the automated scan is clean. If you
+want author credit on the plugin page, add `Contributors: YOUR_WORDPRESS_USERNAME`
+to the top of `readme.txt` and rebuild before submitting. The submitting account
+becomes the plugin owner.
 
 ## 3. Submit
 
 1. Sign in at https://wordpress.org/ and open
    https://wordpress.org/plugins/developers/.
 2. Click **Submit a Plugin**.
-3. Upload `dist/wazobiamail-0.1.1.zip` (built by `bash build.sh`).
+3. Upload `dist/wazobiamail-0.1.2.zip` (built by `bash build.sh`).
 4. Fill in the form:
    - Plugin name: **WazobiaMail - Transactional Email & Deliverability**
    - Description: the short description from `readme.txt`.
@@ -71,14 +72,14 @@ second submission.
 WordPress.org gives SVN access to:
 
 ```text
-https://plugins.svn.wordpress.org/wazobiamail/
+https://plugins.svn.wordpress.org/wazobiamail-transactional-email-deliverability/
 ```
 
 Use your WordPress.org username and password (not GitHub credentials). The first
 checkout may be empty.
 
 ```bash
-svn checkout https://plugins.svn.wordpress.org/wazobiamail/ wazobiamail-svn
+svn checkout https://plugins.svn.wordpress.org/wazobiamail-transactional-email-deliverability/ wazobiamail-svn
 cd wazobiamail-svn
 ```
 
@@ -101,12 +102,12 @@ Create the tag from `trunk` and commit:
 
 ```bash
 svn add --force trunk assets
-svn cp trunk tags/0.1.1
-svn add --force tags/0.1.1
-svn commit -m "Release WazobiaMail 0.1.1" --username YOUR_WORDPRESS_ORG_USERNAME
+svn cp trunk tags/0.1.2
+svn add --force tags/0.1.2
+svn commit -m "Release WazobiaMail 0.1.2" --username YOUR_WORDPRESS_ORG_USERNAME
 ```
 
-The SVN tag **must** match `Stable tag: 0.1.1` in `readme.txt`. WordPress.org
+The SVN tag **must** match `Stable tag: 0.1.2` in `readme.txt`. WordPress.org
 builds the download ZIP from that tag.
 
 ## 5. Alternative: GitHub Actions
@@ -118,7 +119,7 @@ After approval, add repository secrets:
 
 Then run **Actions → Deploy to WordPress.org → Run workflow** from the plugin
 repository. The workflow uses `10up/action-wordpress-plugin-deploy`, deploys
-`trunk`, creates the `0.1.1` tag, and copies `.wordpress-org` into SVN `assets`.
+`trunk`, creates the `0.1.2` tag, and copies `.wordpress-org` into SVN `assets`.
 
 The workflow is manual (`workflow_dispatch`) so it will not fail before the
 account is approved and secrets exist.

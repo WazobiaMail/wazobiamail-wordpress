@@ -1,10 +1,9 @@
 === WazobiaMail - Transactional Email & Deliverability ===
-Contributors: oyenet1
 Tags: transactional email, email delivery, dns, deliverability, wp_mail
 Requires at least: 5.8
-Tested up to: 6.7
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -137,6 +136,11 @@ https://wazobiamail.com/privacy/
 
 == Changelog ==
 
+= 0.1.2 =
+* Fix WordPress.org automated checks: text domain now matches the plugin slug,
+  `Tested up to` is 7.1, placeholders are ordered, translator comments were
+  added, admin error output is escaped, and the upload boundary uses `wp_rand()`.
+
 = 0.1.1 =
 * Prepare the WordPress.org submission: uninstall cleanup, external-service and
   privacy disclosures, plugin icons/banners, and a clean distribution build.
@@ -155,6 +159,9 @@ https://wazobiamail.com/privacy/
 * Add the admin settings screen, test email sender, and delivery log.
 
 == Upgrade Notice ==
+
+= 0.1.2 =
+WordPress.org automated-check fixes; no functional changes.
 
 = 0.1.1 =
 Metadata and WordPress.org submission preparation; no breaking changes.

@@ -23,6 +23,6 @@ jobs:
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          SLUG: wazobiamail
-          VERSION: 0.1.1
+          SLUG: wazobiamail-transactional-email-deliverability
+          VERSION: 0.1.2
           ASSETS_DIR: .wordpress-org

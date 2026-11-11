@@ -53,7 +53,7 @@ class WazobiaMail_Mailer {
         if (!$this->client->is_configured()) {
             $error = new WP_Error(
                 'wazobiamail_unconfigured',
-                __('WazobiaMail API key is mandatory but not configured. Email delivery aborted.', 'wazobiamail')
+                __('WazobiaMail API key is mandatory but not configured. Email delivery aborted.', 'wazobiamail-transactional-email-deliverability')
             );
             do_action('wp_mail_failed', $error);
             return false;
@@ -98,7 +98,7 @@ class WazobiaMail_Mailer {
         if (empty($recipients)) {
             return [
                 'success' => false,
-                'error'   => __('Recipient address ($to) cannot be empty.', 'wazobiamail'),
+                'error'   => __('Recipient address ($to) cannot be empty.', 'wazobiamail-transactional-email-deliverability'),
             ];
         }
 
@@ -336,7 +336,8 @@ class WazobiaMail_Mailer {
                     'success'     => false,
                     'attachments' => [],
                     'error'       => sprintf(
-                        __('Attachment "%s" does not exist or is not readable.', 'wazobiamail'),
+                        /* translators: %s: attachment file path. */
+                        __('Attachment "%s" does not exist or is not readable.', 'wazobiamail-transactional-email-deliverability'),
                         $file
                     ),
                 ];
@@ -348,7 +349,8 @@ class WazobiaMail_Mailer {
                     'success'     => false,
                     'attachments' => [],
                     'error'       => sprintf(
-                        __('Failed to upload email attachment "%1$s": %2$s', 'wazobiamail'),
+                        /* translators: 1: attachment file name, 2: upload error message. */
+                        __('Failed to upload email attachment "%1$s": %2$s', 'wazobiamail-transactional-email-deliverability'),
                         basename($file),
                         $upload['error']
                     ),
@@ -369,7 +371,8 @@ class WazobiaMail_Mailer {
                     'success'     => false,
                     'attachments' => [],
                     'error'       => sprintf(
-                        __('Failed to upload email attachment "%s": the API did not return a public URL.', 'wazobiamail'),
+                        /* translators: %s: attachment file name. */
+                        __('Failed to upload email attachment "%s": the API did not return a public URL.', 'wazobiamail-transactional-email-deliverability'),
                         basename($file)
                     ),
                 ];

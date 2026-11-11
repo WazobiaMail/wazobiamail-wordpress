@@ -3,14 +3,14 @@
  * Plugin Name:       WazobiaMail - Transactional Email & Deliverability
  * Plugin URI:        https://docs.wazobiamail.com/docs/guides/sdks/wordpress
  * Description:       Send WordPress email through the WazobiaMail API. Start free with 3,000 emails/month. A Resend alternative that also supports SMTP, with automatic domain setup, DNS verification, and open/click receipts.
- * Version:           0.1.1
+ * Version:           0.1.2
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            WazobiaMail
  * Author URI:        https://wazobiamail.com
  * License:           MIT
  * License URI:       https://opensource.org/licenses/MIT
- * Text Domain:       wazobiamail
+ * Text Domain:       wazobiamail-transactional-email-deliverability
  * Domain Path:       /languages
  *
  * @package           WazobiaMail
@@ -18,7 +18,7 @@
 
 defined('ABSPATH') || exit;
 
-define('WAZOBIAMAIL_VERSION', '0.1.1');
+define('WAZOBIAMAIL_VERSION', '0.1.2');
 define('WAZOBIAMAIL_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WAZOBIAMAIL_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WAZOBIAMAIL_BASENAME', plugin_basename(__FILE__));
@@ -58,7 +58,7 @@ add_action('plugins_loaded', 'wazobiamail_init');
  * Load bundled translations.
  */
 function wazobiamail_load_textdomain() {
-    load_plugin_textdomain('wazobiamail', false, dirname(WAZOBIAMAIL_BASENAME) . '/languages');
+    load_plugin_textdomain('wazobiamail-transactional-email-deliverability', false, dirname(WAZOBIAMAIL_BASENAME) . '/languages');
 }
 add_action('init', 'wazobiamail_load_textdomain');
 
@@ -72,7 +72,7 @@ function wazobiamail_add_action_links($links) {
     $settings_link = sprintf(
         '<a href="%s">%s</a>',
         esc_url(admin_url('options-general.php?page=wazobiamail')),
-        esc_html__('Settings', 'wazobiamail')
+        esc_html__('Settings', 'wazobiamail-transactional-email-deliverability')
     );
     array_unshift($links, $settings_link);
     return $links;

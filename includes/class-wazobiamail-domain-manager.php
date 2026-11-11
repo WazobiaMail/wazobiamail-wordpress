@@ -75,7 +75,7 @@ class WazobiaMail_Domain_Manager {
         if (!$this->client->is_configured()) {
             return [
                 'success' => false,
-                'error'   => __('Cannot register site domain: WazobiaMail API Key is mandatory and not set.', 'wazobiamail'),
+                'error'   => __('Cannot register site domain: WazobiaMail API Key is mandatory and not set.', 'wazobiamail-transactional-email-deliverability'),
             ];
         }
 
@@ -93,7 +93,8 @@ class WazobiaMail_Domain_Manager {
                     );
                     return [
                         'success' => true,
-                        'message' => sprintf(__('Site domain %s is already registered in WazobiaMail.', 'wazobiamail'), $target_domain),
+                        /* translators: %s: domain name. */
+                        'message' => sprintf(__('Site domain %s is already registered in WazobiaMail.', 'wazobiamail-transactional-email-deliverability'), $target_domain),
                         'domain'  => $existing,
                     ];
                 }
@@ -121,7 +122,8 @@ class WazobiaMail_Domain_Manager {
 
         return [
             'success'   => true,
-            'message'   => sprintf(__('Successfully registered %s with WazobiaMail!', 'wazobiamail'), $target_domain),
+            /* translators: %s: domain name. */
+            'message'   => sprintf(__('Successfully registered %s with WazobiaMail!', 'wazobiamail-transactional-email-deliverability'), $target_domain),
             'domain_id' => $domain_id,
             'status'    => $status,
         ];
@@ -137,7 +139,7 @@ class WazobiaMail_Domain_Manager {
         if (empty($info['domain_id'])) {
             return [
                 'success' => false,
-                'error'   => __('Site domain is not registered yet.', 'wazobiamail'),
+                'error'   => __('Site domain is not registered yet.', 'wazobiamail-transactional-email-deliverability'),
                 'records' => [],
             ];
         }
@@ -175,7 +177,7 @@ class WazobiaMail_Domain_Manager {
         if (empty($info['domain_id'])) {
             return [
                 'success' => false,
-                'error'   => __('Site domain is not registered yet.', 'wazobiamail'),
+                'error'   => __('Site domain is not registered yet.', 'wazobiamail-transactional-email-deliverability'),
             ];
         }
 
@@ -198,8 +200,8 @@ class WazobiaMail_Domain_Manager {
             'verified' => $verified,
             'status'   => $new_status,
             'message'  => $verified 
-                ? __('Site domain DNS is fully verified and active!', 'wazobiamail')
-                : __('DNS records are still propagating. Please allow 5-15 minutes and retry.', 'wazobiamail'),
+                ? __('Site domain DNS is fully verified and active!', 'wazobiamail-transactional-email-deliverability')
+                : __('DNS records are still propagating. Please allow 5-15 minutes and retry.', 'wazobiamail-transactional-email-deliverability'),
         ];
     }
 

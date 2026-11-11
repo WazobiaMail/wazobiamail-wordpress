@@ -150,6 +150,13 @@ function wp_strip_all_tags($text) {
     return trim(strip_tags((string) $text));
 }
 
+function wp_rand($min = 0, $max = 0) {
+    if ($max <= 0) {
+        return random_int(0, max(1, $min));
+    }
+    return random_int(min($min, $max), max($min, $max));
+}
+
 function wp_generate_password($length = 12, $special = true) {
     return substr(md5(uniqid((string) mt_rand(), true)), 0, $length);
 }

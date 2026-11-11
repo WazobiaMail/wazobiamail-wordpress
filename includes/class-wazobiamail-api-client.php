@@ -10,7 +10,7 @@ defined('ABSPATH') || exit;
 
 class WazobiaMail_API_Client {
 
-    const VERSION = '0.1.1';
+    const VERSION = '0.1.2';
     const DEFAULT_BASE_URL = 'https://app.wazobiamail.com/api/v1';
     const DEFAULT_TIMEOUT = 30;
 
@@ -163,7 +163,7 @@ class WazobiaMail_API_Client {
         }
 
         // Error handling
-        $message = __('API request failed', 'wazobiamail');
+        $message = __('API request failed', 'wazobiamail-transactional-email-deliverability');
         if (is_array($decoded)) {
             if (!empty($decoded['message'])) {
                 $message = $decoded['message'];
@@ -194,7 +194,7 @@ class WazobiaMail_API_Client {
             return [
                 'success' => false,
                 'code'    => 401,
-                'error'   => __('WazobiaMail API Key is mandatory and not configured.', 'wazobiamail'),
+                'error'   => __('WazobiaMail API Key is mandatory and not configured.', 'wazobiamail-transactional-email-deliverability'),
                 'data'    => null,
             ];
         }
@@ -238,7 +238,7 @@ class WazobiaMail_API_Client {
             return [
                 'success' => false,
                 'code'    => 401,
-                'error'   => __('WazobiaMail API Key is mandatory and not configured.', 'wazobiamail'),
+                'error'   => __('WazobiaMail API Key is mandatory and not configured.', 'wazobiamail-transactional-email-deliverability'),
                 'data'    => null,
             ];
         }
@@ -247,7 +247,7 @@ class WazobiaMail_API_Client {
             return [
                 'success' => false,
                 'code'    => 400,
-                'error'   => __('No attachment file path was provided.', 'wazobiamail'),
+                'error'   => __('No attachment file path was provided.', 'wazobiamail-transactional-email-deliverability'),
                 'data'    => null,
             ];
         }
@@ -259,7 +259,8 @@ class WazobiaMail_API_Client {
                 'success' => false,
                 'code'    => 400,
                 'error'   => sprintf(
-                    __('Attachment "%s" does not exist or is not readable.', 'wazobiamail'),
+                    /* translators: %s: attachment file path. */
+                    __('Attachment "%s" does not exist or is not readable.', 'wazobiamail-transactional-email-deliverability'),
                     $path
                 ),
                 'data'    => null,
@@ -271,7 +272,8 @@ class WazobiaMail_API_Client {
                 'success' => false,
                 'code'    => 400,
                 'error'   => sprintf(
-                    __('Attachment "%s" is not a regular file.', 'wazobiamail'),
+                    /* translators: %s: attachment file path. */
+                    __('Attachment "%s" is not a regular file.', 'wazobiamail-transactional-email-deliverability'),
                     $path
                 ),
                 'data'    => null,
@@ -284,7 +286,8 @@ class WazobiaMail_API_Client {
                 'success' => false,
                 'code'    => 400,
                 'error'   => sprintf(
-                    __('Attachment "%s" is empty or could not be read.', 'wazobiamail'),
+                    /* translators: %s: attachment file path. */
+                    __('Attachment "%s" is empty or could not be read.', 'wazobiamail-transactional-email-deliverability'),
                     $path
                 ),
                 'data'    => null,
@@ -297,7 +300,8 @@ class WazobiaMail_API_Client {
                 'success' => false,
                 'code'    => 400,
                 'error'   => sprintf(
-                    __('Attachment "%s" is larger than the 10MB upload limit.', 'wazobiamail'),
+                    /* translators: %s: attachment file name. */
+                    __('Attachment "%s" is larger than the 10MB upload limit.', 'wazobiamail-transactional-email-deliverability'),
                     basename($path)
                 ),
                 'data'    => null,
@@ -310,7 +314,8 @@ class WazobiaMail_API_Client {
                 'success' => false,
                 'code'    => 400,
                 'error'   => sprintf(
-                    __('Attachment "%s" could not be read.', 'wazobiamail'),
+                    /* translators: %s: attachment file name. */
+                    __('Attachment "%s" could not be read.', 'wazobiamail-transactional-email-deliverability'),
                     basename($path)
                 ),
                 'data'    => null,
@@ -318,7 +323,7 @@ class WazobiaMail_API_Client {
         }
 
         $file_name = basename($path);
-        $boundary  = '----WazobiaMailBoundary' . md5(uniqid((string) mt_rand(), true));
+        $boundary  = '----WazobiaMailBoundary' . md5(uniqid((string) wp_rand(), true));
         $mime_type = $this->detect_mime_type($path);
 
         // WordPress has no native file multipart helper, so build the body
@@ -349,7 +354,7 @@ class WazobiaMail_API_Client {
             return [
                 'success' => false,
                 'code'    => 0,
-                'error'   => __('Attachment upload succeeded but the API did not return file metadata.', 'wazobiamail'),
+                'error'   => __('Attachment upload succeeded but the API did not return file metadata.', 'wazobiamail-transactional-email-deliverability'),
                 'data'    => $data,
             ];
         }
@@ -358,7 +363,7 @@ class WazobiaMail_API_Client {
             return [
                 'success' => false,
                 'code'    => 0,
-                'error'   => __('Attachment upload succeeded but no public URL was returned. Ask the WazobiaMail administrator to configure attachment storage.', 'wazobiamail'),
+                'error'   => __('Attachment upload succeeded but no public URL was returned. Ask the WazobiaMail administrator to configure attachment storage.', 'wazobiamail-transactional-email-deliverability'),
                 'data'    => $data,
             ];
         }
