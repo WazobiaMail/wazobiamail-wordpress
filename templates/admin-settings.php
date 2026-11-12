@@ -13,6 +13,10 @@ $nonce = wp_create_nonce('wazobiamail_admin_nonce');
 ?>
 
 <div class="wrap wazobiamail-settings-wrap">
+    <style>
+        .wazobiamail-table-scroll { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .wazobiamail-table-scroll > table { min-width: 680px; }
+    </style>
     <h1>
         <span class="dashicons dashicons-email-alt" style="font-size:32px; width:32px; height:32px; vertical-align:middle; margin-right:8px; color:#2271b1;"></span>
         <?php esc_html_e('WazobiaMail Transactional Email Settings', 'wazobiamail-transactional-email-deliverability'); ?>
@@ -199,32 +203,34 @@ $nonce = wp_create_nonce('wazobiamail_admin_nonce');
                     <p class="description">
                         <?php esc_html_e('Add the following DNS records to your domain DNS provider (e.g., Cloudflare, Route53, Namecheap, cPanel):', 'wazobiamail-transactional-email-deliverability'); ?>
                     </p>
-                    <table class="widefat striped">
-                        <thead>
-                            <tr>
-                                <th><?php esc_html_e('Type', 'wazobiamail-transactional-email-deliverability'); ?></th>
-                                <th><?php esc_html_e('Host / Name', 'wazobiamail-transactional-email-deliverability'); ?></th>
-                                <th><?php esc_html_e('Value / Target', 'wazobiamail-transactional-email-deliverability'); ?></th>
-                                <th><?php esc_html_e('Status', 'wazobiamail-transactional-email-deliverability'); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($dns_data['records'] as $record) : ?>
+                    <div class="wazobiamail-table-scroll">
+                        <table class="widefat striped">
+                            <thead>
                                 <tr>
-                                    <td><strong><?php echo esc_html(isset($record['recordType']) ? $record['recordType'] : $record['type']); ?></strong></td>
-                                    <td><code><?php echo esc_html(isset($record['name']) ? $record['name'] : $record['host']); ?></code></td>
-                                    <td style="word-break:break-all;"><code><?php echo esc_html(isset($record['value']) ? $record['value'] : $record['target']); ?></code></td>
-                                    <td>
-                                        <?php if (!empty($record['verified']) || (isset($record['status']) && $record['status'] === 'verified')) : ?>
-                                            <span style="color:#00a32a; font-weight:600;">&#10003; <?php esc_html_e('Verified', 'wazobiamail-transactional-email-deliverability'); ?></span>
-                                        <?php else : ?>
-                                            <span style="color:#dba617; font-weight:600;">&#9203; <?php esc_html_e('Pending', 'wazobiamail-transactional-email-deliverability'); ?></span>
-                                        <?php endif; ?>
-                                    </td>
+                                    <th><?php esc_html_e('Type', 'wazobiamail-transactional-email-deliverability'); ?></th>
+                                    <th><?php esc_html_e('Host / Name', 'wazobiamail-transactional-email-deliverability'); ?></th>
+                                    <th><?php esc_html_e('Value / Target', 'wazobiamail-transactional-email-deliverability'); ?></th>
+                                    <th><?php esc_html_e('Status', 'wazobiamail-transactional-email-deliverability'); ?></th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($dns_data['records'] as $record) : ?>
+                                    <tr>
+                                        <td><strong><?php echo esc_html(isset($record['recordType']) ? $record['recordType'] : $record['type']); ?></strong></td>
+                                        <td><code><?php echo esc_html(isset($record['name']) ? $record['name'] : $record['host']); ?></code></td>
+                                        <td style="word-break:break-all;"><code><?php echo esc_html(isset($record['value']) ? $record['value'] : $record['target']); ?></code></td>
+                                        <td>
+                                            <?php if (!empty($record['verified']) || (isset($record['status']) && $record['status'] === 'verified')) : ?>
+                                                <span style="color:#00a32a; font-weight:600;">&#10003; <?php esc_html_e('Verified', 'wazobiamail-transactional-email-deliverability'); ?></span>
+                                            <?php else : ?>
+                                                <span style="color:#dba617; font-weight:600;">&#9203; <?php esc_html_e('Pending', 'wazobiamail-transactional-email-deliverability'); ?></span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php endif; ?>
             </div>
 
@@ -273,34 +279,36 @@ $nonce = wp_create_nonce('wazobiamail_admin_nonce');
                 <?php if (empty($logs)) : ?>
                     <p><em><?php esc_html_e('No emails dispatched yet.', 'wazobiamail-transactional-email-deliverability'); ?></em></p>
                 <?php else : ?>
-                    <table class="widefat striped" style="margin-top:15px;">
-                        <thead>
-                            <tr>
-                                <th><?php esc_html_e('Date/Time', 'wazobiamail-transactional-email-deliverability'); ?></th>
-                                <th><?php esc_html_e('Recipient', 'wazobiamail-transactional-email-deliverability'); ?></th>
-                                <th><?php esc_html_e('Subject', 'wazobiamail-transactional-email-deliverability'); ?></th>
-                                <th><?php esc_html_e('Tracking ID', 'wazobiamail-transactional-email-deliverability'); ?></th>
-                                <th><?php esc_html_e('Status', 'wazobiamail-transactional-email-deliverability'); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($logs as $log) : ?>
+                    <div class="wazobiamail-table-scroll">
+                        <table class="widefat striped" style="margin-top:15px;">
+                            <thead>
                                 <tr>
-                                    <td><?php echo esc_html($log['timestamp']); ?></td>
-                                    <td><?php echo esc_html($log['recipient']); ?></td>
-                                    <td><?php echo esc_html($log['subject']); ?></td>
-                                    <td><code><?php echo esc_html($log['tracking_id']); ?></code></td>
-                                    <td>
-                                        <?php if ($log['status'] === 'queued' || $log['status'] === 'delivered') : ?>
-                                            <span style="color:#00a32a; font-weight:600;">&#10003; <?php echo esc_html(ucfirst($log['status'])); ?></span>
-                                        <?php else : ?>
-                                            <span style="color:#d63638; font-weight:600;">&#9888; <?php echo esc_html(ucfirst($log['status'])); ?></span>
-                                        <?php endif; ?>
-                                    </td>
+                                    <th><?php esc_html_e('Date/Time', 'wazobiamail-transactional-email-deliverability'); ?></th>
+                                    <th><?php esc_html_e('Recipient', 'wazobiamail-transactional-email-deliverability'); ?></th>
+                                    <th><?php esc_html_e('Subject', 'wazobiamail-transactional-email-deliverability'); ?></th>
+                                    <th><?php esc_html_e('Tracking ID', 'wazobiamail-transactional-email-deliverability'); ?></th>
+                                    <th><?php esc_html_e('Status', 'wazobiamail-transactional-email-deliverability'); ?></th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($logs as $log) : ?>
+                                    <tr>
+                                        <td><?php echo esc_html($log['timestamp']); ?></td>
+                                        <td><?php echo esc_html($log['recipient']); ?></td>
+                                        <td><?php echo esc_html($log['subject']); ?></td>
+                                        <td><code><?php echo esc_html($log['tracking_id']); ?></code></td>
+                                        <td>
+                                            <?php if ($log['status'] === 'queued' || $log['status'] === 'delivered') : ?>
+                                                <span style="color:#00a32a; font-weight:600;">&#10003; <?php echo esc_html(ucfirst($log['status'])); ?></span>
+                                            <?php else : ?>
+                                                <span style="color:#d63638; font-weight:600;">&#9888; <?php echo esc_html(ucfirst($log['status'])); ?></span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php endif; ?>
             </div>
         <?php endif; ?>
