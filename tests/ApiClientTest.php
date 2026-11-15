@@ -231,4 +231,9 @@ class ApiClientTest extends TestCase {
 
         unlink($temp_file);
     }
+
+    public function test_client_version_matches_plugin_constant() {
+        $this->assertEquals(WAZOBIAMAIL_VERSION, WazobiaMail_API_Client::VERSION);
+        $this->assertEquals('0.1.4', WazobiaMail_API_Client::VERSION);
+    }
 }

@@ -1,0 +1,111 @@
+.wazobiamail-heading-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    vertical-align: middle;
+    margin-right: 8px;
+    color: #2271b1;
+}
+
+.wazobiamail-tab-content {
+    margin-top: 20px;
+    max-width: 1000px;
+}
+
+.wazobiamail-required {
+    color: #d63638;
+}
+
+.wazobiamail-card {
+    margin-top: 0;
+}
+
+.wazobiamail-domain-actions {
+    margin: 20px 0;
+}
+
+.wazobiamail-btn-icon {
+    vertical-align: text-bottom;
+}
+
+.wazobiamail-action-result {
+    margin-top: 15px;
+    display: none;
+}
+
+.wazobiamail-divider {
+    margin: 25px 0;
+}
+
+.wazobiamail-table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.wazobiamail-table-scroll > table {
+    min-width: 680px;
+}
+
+.wazobiamail-dns-value {
+    word-break: break-all;
+}
+
+.wazobiamail-badge {
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.wazobiamail-badge.version-badge {
+    color: #1d2327;
+    background: #dcdcde;
+    font-size: 13px;
+    vertical-align: middle;
+    margin-left: 6px;
+}
+
+.wazobiamail-badge--verified {
+    background: #00a32a;
+}
+
+.wazobiamail-badge--pending {
+    background: #dba617;
+}
+
+.wazobiamail-badge--unregistered {
+    background: #72aee6;
+}
+
+.wazobiamail-status {
+    font-weight: 600;
+}
+
+.wazobiamail-status--ok {
+    color: #00a32a;
+}
+
+.wazobiamail-status--pending {
+    color: #dba617;
+}
+
+.wazobiamail-status--error {
+    color: #d63638;
+}
+
+.wazobiamail-spinner {
+    float: none;
+    margin-top: 4px;
+}
+
+.wazobiamail-logs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wazobiamail-logs-table {
+    margin-top: 15px;
+}

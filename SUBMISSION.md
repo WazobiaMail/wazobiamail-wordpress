@@ -6,7 +6,7 @@ be completed from this machine.
 
 ## What is already prepared
 
-- Plugin header and `Stable tag: 0.1.2`.
+- Plugin header and `Stable tag: 0.1.4`.
 - `readme.txt` with description, installation, FAQ, external-service disclosure,
   privacy section, changelog and upgrade notice.
 - `uninstall.php` that removes settings, delivery logs and cached DNS data
@@ -52,7 +52,7 @@ becomes the plugin owner.
 1. Sign in at https://wordpress.org/ and open
    https://wordpress.org/plugins/developers/.
 2. Click **Submit a Plugin**.
-3. Upload `dist/wazobiamail-0.1.2.zip` (built by `bash build.sh`).
+3. Upload `dist/wazobiamail-0.1.4.zip` (built by `bash build.sh`).
 4. Fill in the form:
    - Plugin name: **WazobiaMail - Transactional Email & Deliverability**
    - Description: the short description from `readme.txt`.

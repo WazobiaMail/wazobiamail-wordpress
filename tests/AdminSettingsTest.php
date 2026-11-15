@@ -161,5 +161,34 @@ class AdminSettingsTest extends TestCase {
 
         $this->assertStringContainsString('Verified &amp; Active', $domain_output);
         $this->assertStringNotContainsString('Verified & Active', $domain_output);
+        $this->assertStringNotContainsString('<script', $output);
+        $this->assertStringNotContainsString('<style', $output);
+        $this->assertStringNotContainsString('onclick=', $output);
+        $this->assertStringNotContainsString('<script', $domain_output);
+        $this->assertStringNotContainsString('<style', $domain_output);
+        $this->assertStringNotContainsString('onclick=', $domain_output);
+    }
+
+    public function test_enqueue_admin_assets_only_loads_on_wazobiamail_screen() {
+        $admin = new WazobiaMail_Admin();
+
+        $admin->enqueue_admin_assets('edit.php');
+        $this->assertEmpty(WPMockState::$enqueued_styles);
+        $this->assertEmpty(WPMockState::$enqueued_scripts);
+
+        $admin->enqueue_admin_assets('settings_page_wazobiamail');
+        $this->assertArrayHasKey('wazobiamail-admin', WPMockState::$enqueued_styles);
+        $this->assertStringEndsWith('assets/css/admin.css', WPMockState::$enqueued_styles['wazobiamail-admin']['src']);
+        $this->assertEquals(WAZOBIAMAIL_VERSION, WPMockState::$enqueued_styles['wazobiamail-admin']['ver']);
+
+        $this->assertArrayHasKey('wazobiamail-admin', WPMockState::$enqueued_scripts);
+        $this->assertStringEndsWith('assets/js/admin.js', WPMockState::$enqueued_scripts['wazobiamail-admin']['src']);
+        $this->assertTrue(WPMockState::$enqueued_scripts['wazobiamail-admin']['in_footer']);
+
+        $this->assertArrayHasKey('wazobiamailAdmin', WPMockState::$localized_scripts['wazobiamail-admin']);
+        $localized = WPMockState::$localized_scripts['wazobiamail-admin']['wazobiamailAdmin'];
+        $this->assertArrayHasKey('ajaxUrl', $localized);
+        $this->assertArrayHasKey('nonce', $localized);
+        $this->assertArrayHasKey('i18n', $localized);
     }
 }

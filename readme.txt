@@ -3,11 +3,11 @@ Tags: transactional email, email delivery, dns, deliverability, wp_mail
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.3
+Stable tag: 0.1.4
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
-Send WordPress email via the WazobiaMail API. Free 3,000 emails/month. A Resend alternative with API/SMTP, DNS setup and delivery receipts.
+Send WordPress email via the WazobiaMail API with automatic domain setup, DNS verification, attachment uploads, and delivery receipts.
 
 == Description ==
 
@@ -136,6 +136,11 @@ https://wazobiamail.com/privacy/
 
 == Changelog ==
 
+= 0.1.4 =
+* Enqueue admin CSS and JavaScript cleanly using `wp_enqueue_style()`, `wp_enqueue_script()`, and `wp_localize_script()`, removing inline `<script>`, `<style>`, and `onclick` attributes.
+* Prefix all template variables, update MIME detection without deprecated `finfo_close()` or `@` silencing, and replace `md5(uniqid())` boundary generation with `wp_generate_password()`.
+* Remove third-party trademark reference from plugin descriptions.
+
 = 0.1.3 =
 * Fix DOM XSS vectors in admin AJAX notice rendering using safe text nodes.
 * Validate configured API base URL schemes and strip control characters from headers and detected MIME types.
@@ -164,6 +169,9 @@ https://wazobiamail.com/privacy/
 * Add the admin settings screen, test email sender, and delivery log.
 
 == Upgrade Notice ==
+
+= 0.1.4 =
+Enqueued admin CSS/JS assets, WPCS prefix/sanitization updates, and WordPress.org review fixes.
 
 = 0.1.3 =
 Security hardening and WordPress Coding Standards fixes.

@@ -42,12 +42,57 @@ class WazobiaMail_Admin {
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_init', [$this, 'handle_form_actions']);
         add_action('admin_notices', [$this, 'render_admin_notices']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_assets']);
 
         // AJAX handlers
         add_action('wp_ajax_wazobiamail_register_domain', [$this, 'ajax_register_domain']);
         add_action('wp_ajax_wazobiamail_verify_dns', [$this, 'ajax_verify_dns']);
         add_action('wp_ajax_wazobiamail_send_test_email', [$this, 'ajax_send_test_email']);
         add_action('wp_ajax_wazobiamail_clear_logs', [$this, 'ajax_clear_logs']);
+    }
+
+    /**
+     * Enqueue admin styles and scripts on the WazobiaMail settings screen only.
+     *
+     * @param string $hook_suffix Current admin page hook suffix.
+     */
+    public function enqueue_admin_assets($hook_suffix = '') {
+        if ($hook_suffix !== 'settings_page_wazobiamail') {
+            return;
+        }
+
+        wp_enqueue_style(
+            'wazobiamail-admin',
+            WAZOBIAMAIL_PLUGIN_URL . 'assets/css/admin.css',
+            [],
+            WAZOBIAMAIL_VERSION
+        );
+
+        wp_enqueue_script(
+            'wazobiamail-admin',
+            WAZOBIAMAIL_PLUGIN_URL . 'assets/js/admin.js',
+            [],
+            WAZOBIAMAIL_VERSION,
+            true
+        );
+
+        wp_localize_script(
+            'wazobiamail-admin',
+            'wazobiamailAdmin',
+            [
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'nonce'   => wp_create_nonce('wazobiamail_admin_nonce'),
+                'i18n'    => [
+                    'registeringDomain' => __('Registering site domain with WazobiaMail API...', 'wazobiamail-transactional-email-deliverability'),
+                    'verifyingDns'      => __('Querying DNS verification...', 'wazobiamail-transactional-email-deliverability'),
+                    'sendingTestEmail'  => __('Dispatching test email via WazobiaMail REST API...', 'wazobiamail-transactional-email-deliverability'),
+                    'missingRecipient'  => __('Please enter a recipient email address.', 'wazobiamail-transactional-email-deliverability'),
+                    'confirmClearLogs'  => __('Are you sure you want to clear delivery logs?', 'wazobiamail-transactional-email-deliverability'),
+                    'failedPrefix'      => __('Failed:', 'wazobiamail-transactional-email-deliverability'),
+                    'requestFailed'     => __('Request failed.', 'wazobiamail-transactional-email-deliverability'),
+                ],
+            ]
+        );
     }
 
     /**
@@ -71,9 +116,6 @@ class WazobiaMail_Admin {
         if (!current_user_can('manage_options')) {
             return;
         }
-
-        $screen = get_current_screen();
-        $is_wazobia_page = $screen && $screen->id === 'settings_page_wazobiamail';
 
         if (!$this->client->is_configured()) {
             ?>
@@ -107,19 +149,22 @@ class WazobiaMail_Admin {
         $options = get_option('wazobiamail_options', []);
 
         // 1. Mandatory API Key
-        $raw_key = isset($_POST['api_key']) ? sanitize_text_field(wp_unslash($_POST['api_key'])) : '';
+        $raw_key = isset($_POST['api_key']) ? preg_replace('/[\r\n\0]+/', '', sanitize_text_field(wp_unslash($_POST['api_key']))) : '';
         // If the user left it masked (*** or ...), preserve existing saved key
         if (strpos($raw_key, '***') === false && strpos($raw_key, '...') === false && !empty($raw_key)) {
             $options['api_key'] = $raw_key;
         }
 
         // 2. From Name & Email
-        $options['from_name']  = isset($_POST['from_name']) ? sanitize_text_field(wp_unslash($_POST['from_name'])) : get_bloginfo('name');
+        $options['from_name']  = isset($_POST['from_name']) ? preg_replace('/[\r\n\0]+/', '', sanitize_text_field(wp_unslash($_POST['from_name']))) : get_bloginfo('name');
         $options['from_email'] = isset($_POST['from_email']) ? sanitize_email(wp_unslash($_POST['from_email'])) : get_option('admin_email');
 
         // 3. Base URL & Mail Mode
-        $base_url               = isset($_POST['base_url']) ? trim(esc_url_raw(wp_unslash($_POST['base_url']))) : '';
-        $options['base_url']    = !empty($base_url) ? $base_url : WazobiaMail_API_Client::DEFAULT_BASE_URL;
+        $base_url = isset($_POST['base_url']) ? preg_replace('/[\r\n\0]+/', '', trim(esc_url_raw(wp_unslash($_POST['base_url'])))) : '';
+        if (!preg_match('#^https?://#i', $base_url)) {
+            $base_url = '';
+        }
+        $options['base_url']    = !empty($base_url) ? rtrim($base_url, '/') : WazobiaMail_API_Client::DEFAULT_BASE_URL;
         $options['mail_mode']   = (isset($_POST['mail_mode']) && sanitize_text_field(wp_unslash($_POST['mail_mode'])) === 'disabled') ? 'disabled' : 'api';
         $options['enable_logs'] = !empty($_POST['enable_logs']);
 
@@ -150,11 +195,11 @@ class WazobiaMail_Admin {
             wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'wazobiamail-transactional-email-deliverability'));
         }
 
-        $options        = get_option('wazobiamail_options', []);
-        $domain_info    = $this->domain_manager->get_domain_info();
-        $logs           = get_option('wazobiamail_delivery_logs', []);
-        $masked_api_key = WazobiaMail_API_Client::mask_secret(!empty($options['api_key']) ? $options['api_key'] : '');
-        $dns_data       = !empty($domain_info['domain_id']) ? $this->domain_manager->get_dns_records() : null;
+        $wazobiamail_options        = get_option('wazobiamail_options', []);
+        $wazobiamail_domain_info    = $this->domain_manager->get_domain_info();
+        $wazobiamail_logs           = get_option('wazobiamail_delivery_logs', []);
+        $wazobiamail_masked_api_key = WazobiaMail_API_Client::mask_secret(!empty($wazobiamail_options['api_key']) ? $wazobiamail_options['api_key'] : '');
+        $wazobiamail_dns_data       = !empty($wazobiamail_domain_info['domain_id']) ? $this->domain_manager->get_dns_records() : null;
 
         include dirname(__DIR__) . '/templates/admin-settings.php';
     }
@@ -220,12 +265,16 @@ class WazobiaMail_Admin {
         /* translators: %s: WordPress site name. */
         $subject = sprintf(__('[WazobiaMail Test] Verification Email from %s', 'wazobiamail-transactional-email-deliverability'), get_bloginfo('name'));
         $body = sprintf(
-            "<h2>%s</h2><p>%s</p><ul><li><strong>Site:</strong> %s</li><li><strong>Time:</strong> %s</li><li><strong>Status:</strong> Connected to WazobiaMail API Gateway</li></ul><p>%s</p>",
-            __('Congratulations! WazobiaMail is working!', 'wazobiamail-transactional-email-deliverability'),
-            __('Your WordPress site is now successfully configured to deliver transactional emails through the high-deliverability WazobiaMail REST API.', 'wazobiamail-transactional-email-deliverability'),
+            '<h2>%s</h2><p>%s</p><ul><li><strong>%s:</strong> %s</li><li><strong>%s:</strong> %s</li><li><strong>%s:</strong> %s</li></ul><p>%s</p>',
+            esc_html__('Congratulations! WazobiaMail is working!', 'wazobiamail-transactional-email-deliverability'),
+            esc_html__('Your WordPress site is now successfully configured to deliver transactional emails through the high-deliverability WazobiaMail REST API.', 'wazobiamail-transactional-email-deliverability'),
+            esc_html__('Site', 'wazobiamail-transactional-email-deliverability'),
             esc_html(get_bloginfo('name')),
+            esc_html__('Time', 'wazobiamail-transactional-email-deliverability'),
             esc_html(current_time('mysql')),
-            __('Deliverability stats, read receipts, and click receipts will be tracked automatically.', 'wazobiamail-transactional-email-deliverability')
+            esc_html__('Status', 'wazobiamail-transactional-email-deliverability'),
+            esc_html__('Connected to WazobiaMail API Gateway', 'wazobiamail-transactional-email-deliverability'),
+            esc_html__('Deliverability stats, read receipts, and click receipts will be tracked automatically.', 'wazobiamail-transactional-email-deliverability')
         );
 
         $res = $mailer->send($recipient, $subject, $body, ['Content-Type: text/html']);

@@ -61,11 +61,11 @@ class WazobiaMail_Mailer {
         }
 
         $result = $this->send(
-            $atts['to'],
-            $atts['subject'],
-            $atts['message'],
-            $atts['headers'],
-            $atts['attachments']
+            isset($atts['to']) ? $atts['to'] : '',
+            isset($atts['subject']) ? $atts['subject'] : '',
+            isset($atts['message']) ? $atts['message'] : '',
+            isset($atts['headers']) ? $atts['headers'] : '',
+            isset($atts['attachments']) ? $atts['attachments'] : []
         );
 
         if (!$result['success']) {

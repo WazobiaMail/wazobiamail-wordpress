@@ -20,6 +20,9 @@ class WPMockState {
     public static $current_user_can_manage_options = true;
     public static $current_user_email = 'admin@example.com';
     public static $json_responses = [];
+    public static $enqueued_styles = [];
+    public static $enqueued_scripts = [];
+    public static $localized_scripts = [];
 
     public static function reset() {
         self::$options = [];
@@ -31,6 +34,9 @@ class WPMockState {
         self::$current_user_can_manage_options = true;
         self::$current_user_email = 'admin@example.com';
         self::$json_responses = [];
+        self::$enqueued_styles = [];
+        self::$enqueued_scripts = [];
+        self::$localized_scripts = [];
     }
 
     public static function queue_response($code, $body = [], $headers = []) {
@@ -330,6 +336,46 @@ function wp_get_current_user() {
     $user = new stdClass();
     $user->user_email = WPMockState::$current_user_email;
     return $user;
+}
+
+function wp_enqueue_style($handle, $src = '', $deps = [], $ver = false, $media = 'all') {
+    WPMockState::$enqueued_styles[$handle] = [
+        'src'   => $src,
+        'deps'  => $deps,
+        'ver'   => $ver,
+        'media' => $media,
+    ];
+}
+
+function wp_enqueue_script($handle, $src = '', $deps = [], $ver = false, $in_footer = false) {
+    WPMockState::$enqueued_scripts[$handle] = [
+        'src'       => $src,
+        'deps'      => $deps,
+        'ver'       => $ver,
+        'in_footer' => $in_footer,
+    ];
+}
+
+function wp_localize_script($handle, $object_name, $l10n) {
+    WPMockState::$localized_scripts[$handle][$object_name] = $l10n;
+    return true;
+}
+
+function wp_check_filetype($filename, $mimes = null) {
+    $ext = strtolower(pathinfo((string) $filename, PATHINFO_EXTENSION));
+    $map = [
+        'txt'  => 'text/plain',
+        'pdf'  => 'application/pdf',
+        'png'  => 'image/png',
+        'jpg'  => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'csv'  => 'text/csv',
+        'json' => 'application/json',
+    ];
+    if ($ext !== '' && isset($map[$ext])) {
+        return ['ext' => $ext, 'type' => $map[$ext]];
+    }
+    return ['ext' => false, 'type' => false];
 }
 
 function plugin_dir_path($file) {

@@ -10,7 +10,7 @@ defined('ABSPATH') || exit;
 
 class WazobiaMail_API_Client {
 
-    const VERSION = '0.1.3';
+    const VERSION = '0.1.4';
     const DEFAULT_BASE_URL = 'https://app.wazobiamail.com/api/v1';
     const DEFAULT_TIMEOUT = 30;
 
@@ -316,6 +316,7 @@ class WazobiaMail_API_Client {
             ];
         }
 
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_get_contents, WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading a validated local attachment file path on disk for multipart upload; WP_Filesystem may prompt for FTP credentials outside direct mode.
         $contents = file_get_contents($path);
         if ($contents === false) {
             return [
@@ -331,7 +332,7 @@ class WazobiaMail_API_Client {
         }
 
         $file_name = basename($path);
-        $boundary  = '----WazobiaMailBoundary' . md5(uniqid((string) wp_rand(), true));
+        $boundary  = '----WazobiaMailBoundary' . wp_generate_password(24, false);
         $mime_type = $this->detect_mime_type($path);
 
         // WordPress has no native file multipart helper, so build the body
@@ -387,18 +388,28 @@ class WazobiaMail_API_Client {
      */
     protected function detect_mime_type($path) {
         $detected = null;
-        if (function_exists('mime_content_type')) {
-            $candidate = @mime_content_type($path);
+
+        if (function_exists('wp_check_filetype')) {
+            $checked = wp_check_filetype(basename($path));
+            if (!empty($checked['type']) && is_string($checked['type'])) {
+                $detected = $checked['type'];
+            }
+        }
+
+        if ($detected === null && function_exists('mime_content_type')) {
+            $candidate = mime_content_type($path);
             if (!empty($candidate) && is_string($candidate)) {
                 $detected = $candidate;
             }
         }
 
         if ($detected === null && function_exists('finfo_open')) {
-            $finfo = @finfo_open(FILEINFO_MIME_TYPE);
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
             if ($finfo) {
-                $candidate = @finfo_file($finfo, $path);
-                finfo_close($finfo);
+                $candidate = finfo_file($finfo, $path);
+                if (PHP_VERSION_ID < 80000 && is_resource($finfo)) {
+                    finfo_close($finfo);
+                }
                 if (!empty($candidate) && is_string($candidate)) {
                     $detected = $candidate;
                 }
