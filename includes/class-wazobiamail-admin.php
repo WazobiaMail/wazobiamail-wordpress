@@ -107,19 +107,20 @@ class WazobiaMail_Admin {
         $options = get_option('wazobiamail_options', []);
 
         // 1. Mandatory API Key
-        $raw_key = isset($_POST['api_key']) ? trim((string) $_POST['api_key']) : '';
+        $raw_key = isset($_POST['api_key']) ? sanitize_text_field(wp_unslash($_POST['api_key'])) : '';
         // If the user left it masked (*** or ...), preserve existing saved key
         if (strpos($raw_key, '***') === false && strpos($raw_key, '...') === false && !empty($raw_key)) {
-            $options['api_key'] = sanitize_text_field($raw_key);
+            $options['api_key'] = $raw_key;
         }
 
         // 2. From Name & Email
-        $options['from_name']  = isset($_POST['from_name']) ? sanitize_text_field($_POST['from_name']) : get_bloginfo('name');
-        $options['from_email'] = isset($_POST['from_email']) ? sanitize_email($_POST['from_email']) : get_option('admin_email');
+        $options['from_name']  = isset($_POST['from_name']) ? sanitize_text_field(wp_unslash($_POST['from_name'])) : get_bloginfo('name');
+        $options['from_email'] = isset($_POST['from_email']) ? sanitize_email(wp_unslash($_POST['from_email'])) : get_option('admin_email');
 
         // 3. Base URL & Mail Mode
-        $options['base_url']   = !empty($_POST['base_url']) ? esc_url_raw(trim($_POST['base_url'])) : WazobiaMail_API_Client::DEFAULT_BASE_URL;
-        $options['mail_mode']  = (isset($_POST['mail_mode']) && $_POST['mail_mode'] === 'disabled') ? 'disabled' : 'api';
+        $base_url               = isset($_POST['base_url']) ? trim(esc_url_raw(wp_unslash($_POST['base_url']))) : '';
+        $options['base_url']    = !empty($base_url) ? $base_url : WazobiaMail_API_Client::DEFAULT_BASE_URL;
+        $options['mail_mode']   = (isset($_POST['mail_mode']) && sanitize_text_field(wp_unslash($_POST['mail_mode'])) === 'disabled') ? 'disabled' : 'api';
         $options['enable_logs'] = !empty($_POST['enable_logs']);
 
         update_option('wazobiamail_options', $options);
@@ -131,8 +132,9 @@ class WazobiaMail_Admin {
         }
 
         wp_safe_redirect(add_query_arg([
-            'page'    => 'wazobiamail',
-            'updated' => 'true',
+            'page'     => 'wazobiamail',
+            'updated'  => 'true',
+            '_wpnonce' => wp_create_nonce('wazobiamail_settings_updated'),
         ], admin_url('options-general.php')));
 
         if (!defined('WAZOBIAMAIL_TESTING')) {
@@ -167,7 +169,7 @@ class WazobiaMail_Admin {
             return;
         }
 
-        $domain = isset($_POST['domain']) ? sanitize_text_field($_POST['domain']) : null;
+        $domain = isset($_POST['domain']) ? sanitize_text_field(wp_unslash($_POST['domain'])) : null;
         $res = $this->domain_manager->register_site_domain($domain);
 
         if ($res['success']) {
@@ -208,7 +210,7 @@ class WazobiaMail_Admin {
             return;
         }
 
-        $recipient = isset($_POST['recipient']) ? sanitize_email($_POST['recipient']) : '';
+        $recipient = isset($_POST['recipient']) ? sanitize_email(wp_unslash($_POST['recipient'])) : '';
         if (empty($recipient) || !is_email($recipient)) {
             wp_send_json_error(__('Please enter a valid recipient email address.', 'wazobiamail-transactional-email-deliverability'));
             return;

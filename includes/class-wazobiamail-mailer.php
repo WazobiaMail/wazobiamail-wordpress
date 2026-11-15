@@ -55,6 +55,7 @@ class WazobiaMail_Mailer {
                 'wazobiamail_unconfigured',
                 __('WazobiaMail API key is mandatory but not configured. Email delivery aborted.', 'wazobiamail-transactional-email-deliverability')
             );
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core WordPress hook fired when pre_wp_mail short-circuits with false.
             do_action('wp_mail_failed', $error);
             return false;
         }
@@ -73,6 +74,7 @@ class WazobiaMail_Mailer {
                 $result['error'],
                 $atts
             );
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core WordPress hook fired when pre_wp_mail short-circuits with false.
             do_action('wp_mail_failed', $error);
             return false;
         }

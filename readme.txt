@@ -3,7 +3,7 @@ Tags: transactional email, email delivery, dns, deliverability, wp_mail
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.2
+Stable tag: 0.1.3
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -136,6 +136,11 @@ https://wazobiamail.com/privacy/
 
 == Changelog ==
 
+= 0.1.3 =
+* Fix DOM XSS vectors in admin AJAX notice rendering using safe text nodes.
+* Validate configured API base URL schemes and strip control characters from headers and detected MIME types.
+* Enforce WordPress Coding Standards (WPCS) escaping and input sanitization.
+
 = 0.1.2 =
 * Fix WordPress.org automated checks: text domain now matches the plugin slug,
   `Tested up to` is 7.1, placeholders are ordered, translator comments were
@@ -159,6 +164,9 @@ https://wazobiamail.com/privacy/
 * Add the admin settings screen, test email sender, and delivery log.
 
 == Upgrade Notice ==
+
+= 0.1.3 =
+Security hardening and WordPress Coding Standards fixes.
 
 = 0.1.2 =
 WordPress.org automated-check fixes; no functional changes.

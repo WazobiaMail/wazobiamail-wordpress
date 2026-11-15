@@ -22,15 +22,15 @@ function wazobiamail_uninstall_site() {
 }
 
 if (is_multisite()) {
-    $site_ids = get_sites(
+    $wazobiamail_site_ids = get_sites(
         [
             'fields' => 'ids',
             'number' => 0,
         ]
     );
 
-    foreach ($site_ids as $site_id) {
-        switch_to_blog((int) $site_id);
+    foreach ($wazobiamail_site_ids as $wazobiamail_site_id) {
+        switch_to_blog((int) $wazobiamail_site_id);
         wazobiamail_uninstall_site();
         restore_current_blog();
     }

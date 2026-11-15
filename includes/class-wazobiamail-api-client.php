@@ -10,7 +10,7 @@ defined('ABSPATH') || exit;
 
 class WazobiaMail_API_Client {
 
-    const VERSION = '0.1.2';
+    const VERSION = '0.1.3';
     const DEFAULT_BASE_URL = 'https://app.wazobiamail.com/api/v1';
     const DEFAULT_TIMEOUT = 30;
 
@@ -45,13 +45,18 @@ class WazobiaMail_API_Client {
     public function __construct($api_key = null, $base_url = null, $timeout = null) {
         $options = get_option('wazobiamail_options', []);
 
-        $this->api_key = $api_key !== null 
+        $raw_key = $api_key !== null 
             ? (string) $api_key 
             : (isset($options['api_key']) ? (string) $options['api_key'] : '');
+        $this->api_key = preg_replace('/[\r\n\0]+/', '', trim($raw_key));
 
         $resolved_base = !empty($base_url) 
             ? (string) $base_url 
             : (!empty($options['base_url']) ? (string) $options['base_url'] : self::DEFAULT_BASE_URL);
+        $resolved_base = preg_replace('/[\r\n\0]+/', '', trim($resolved_base));
+        if (!preg_match('#^https?://#i', $resolved_base)) {
+            $resolved_base = self::DEFAULT_BASE_URL;
+        }
 
         $this->base_url = rtrim($resolved_base, '/');
         $this->timeout  = $timeout !== null ? (int) $timeout : self::DEFAULT_TIMEOUT;
@@ -113,7 +118,10 @@ class WazobiaMail_API_Client {
         }
 
         if (!empty($idempotency_key)) {
-            $headers['Idempotency-Key'] = sanitize_text_field($idempotency_key);
+            $clean_key = preg_replace('/[\r\n\0]+/', '', (string) sanitize_text_field($idempotency_key));
+            if ($clean_key !== '') {
+                $headers['Idempotency-Key'] = $clean_key;
+            }
         }
 
         return $headers;
@@ -378,21 +386,29 @@ class WazobiaMail_API_Client {
      * @return string
      */
     protected function detect_mime_type($path) {
+        $detected = null;
         if (function_exists('mime_content_type')) {
-            $detected = @mime_content_type($path);
-            if (!empty($detected) && is_string($detected)) {
-                return $detected;
+            $candidate = @mime_content_type($path);
+            if (!empty($candidate) && is_string($candidate)) {
+                $detected = $candidate;
             }
         }
 
-        if (function_exists('finfo_open')) {
+        if ($detected === null && function_exists('finfo_open')) {
             $finfo = @finfo_open(FILEINFO_MIME_TYPE);
             if ($finfo) {
-                $detected = @finfo_file($finfo, $path);
+                $candidate = @finfo_file($finfo, $path);
                 finfo_close($finfo);
-                if (!empty($detected) && is_string($detected)) {
-                    return $detected;
+                if (!empty($candidate) && is_string($candidate)) {
+                    $detected = $candidate;
                 }
+            }
+        }
+
+        if (is_string($detected)) {
+            $clean = trim((string) preg_replace('/[\r\n\0;].*$/', '', $detected));
+            if ($clean !== '') {
+                return $clean;
             }
         }
 

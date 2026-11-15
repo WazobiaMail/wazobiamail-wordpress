@@ -8,8 +8,16 @@
 
 defined('ABSPATH') || exit;
 
-$active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general';
-$nonce = wp_create_nonce('wazobiamail_admin_nonce');
+$wazobiamail_allowed_tabs = ['general', 'domain', 'test', 'logs'];
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only tab navigation parameter validated against an explicit allowlist.
+$wazobiamail_raw_tab      = isset($_GET['tab']) ? sanitize_text_field(wp_unslash($_GET['tab'])) : 'general';
+$wazobiamail_active_tab   = in_array($wazobiamail_raw_tab, $wazobiamail_allowed_tabs, true) ? $wazobiamail_raw_tab : 'general';
+$wazobiamail_nonce        = wp_create_nonce('wazobiamail_admin_nonce');
+
+$wazobiamail_settings_updated = false;
+if (isset($_GET['_wpnonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'wazobiamail_settings_updated')) {
+    $wazobiamail_settings_updated = isset($_GET['updated']) && sanitize_text_field(wp_unslash($_GET['updated'])) === 'true';
+}
 ?>
 
 <div class="wrap wazobiamail-settings-wrap">
@@ -20,7 +28,7 @@ $nonce = wp_create_nonce('wazobiamail_admin_nonce');
     <h1>
         <span class="dashicons dashicons-email-alt" style="font-size:32px; width:32px; height:32px; vertical-align:middle; margin-right:8px; color:#2271b1;"></span>
         <?php esc_html_e('WazobiaMail Transactional Email Settings', 'wazobiamail-transactional-email-deliverability'); ?>
-        <span class="wazobiamail-badge version-badge">v0.1.0</span>
+        <span class="wazobiamail-badge version-badge">v<?php echo esc_html(WAZOBIAMAIL_VERSION); ?></span>
     </h1>
 
     <p class="description">
@@ -30,29 +38,29 @@ $nonce = wp_create_nonce('wazobiamail_admin_nonce');
         </a>
     </p>
 
-    <?php if (isset($_GET['updated']) && $_GET['updated'] === 'true') : ?>
+    <?php if ($wazobiamail_settings_updated) : ?>
         <div class="notice notice-success is-dismissible">
             <p><?php esc_html_e('WazobiaMail settings updated successfully.', 'wazobiamail-transactional-email-deliverability'); ?></p>
         </div>
     <?php endif; ?>
 
     <h2 class="nav-tab-wrapper">
-        <a href="?page=wazobiamail&tab=general" class="nav-tab <?php echo $active_tab === 'general' ? 'nav-tab-active' : ''; ?>">
+        <a href="?page=wazobiamail&tab=general" class="nav-tab <?php echo $wazobiamail_active_tab === 'general' ? 'nav-tab-active' : ''; ?>">
             <span class="dashicons dashicons-admin-generic"></span> <?php esc_html_e('API & Sender', 'wazobiamail-transactional-email-deliverability'); ?>
         </a>
-        <a href="?page=wazobiamail&tab=domain" class="nav-tab <?php echo $active_tab === 'domain' ? 'nav-tab-active' : ''; ?>">
+        <a href="?page=wazobiamail&tab=domain" class="nav-tab <?php echo $wazobiamail_active_tab === 'domain' ? 'nav-tab-active' : ''; ?>">
             <span class="dashicons dashicons-networking"></span> <?php esc_html_e('Site Domain & DNS', 'wazobiamail-transactional-email-deliverability'); ?>
         </a>
-        <a href="?page=wazobiamail&tab=test" class="nav-tab <?php echo $active_tab === 'test' ? 'nav-tab-active' : ''; ?>">
+        <a href="?page=wazobiamail&tab=test" class="nav-tab <?php echo $wazobiamail_active_tab === 'test' ? 'nav-tab-active' : ''; ?>">
             <span class="dashicons dashicons-arrow-right-alt"></span> <?php esc_html_e('Send Test Email', 'wazobiamail-transactional-email-deliverability'); ?>
         </a>
-        <a href="?page=wazobiamail&tab=logs" class="nav-tab <?php echo $active_tab === 'logs' ? 'nav-tab-active' : ''; ?>">
+        <a href="?page=wazobiamail&tab=logs" class="nav-tab <?php echo $wazobiamail_active_tab === 'logs' ? 'nav-tab-active' : ''; ?>">
             <span class="dashicons dashicons-list-view"></span> <?php esc_html_e('Delivery Logs', 'wazobiamail-transactional-email-deliverability'); ?>
         </a>
     </h2>
 
     <div class="wazobiamail-tab-content" style="margin-top:20px; max-width:1000px;">
-        <?php if ($active_tab === 'general') : ?>
+        <?php if ($wazobiamail_active_tab === 'general') : ?>
             <!-- Tab 1: General API & Sender Settings -->
             <form method="post" action="">
                 <?php wp_nonce_field('wazobiamail_settings_action', 'wazobiamail_nonce'); ?>
@@ -138,7 +146,7 @@ $nonce = wp_create_nonce('wazobiamail_admin_nonce');
                 </p>
             </form>
 
-        <?php elseif ($active_tab === 'domain') : ?>
+        <?php elseif ($wazobiamail_active_tab === 'domain') : ?>
             <!-- Tab 2: Site Domain & DNS Records -->
             <div class="card" style="margin-top:0;">
                 <h2><?php esc_html_e('Site Domain Registration & Verification', 'wazobiamail-transactional-email-deliverability'); ?></h2>
@@ -214,13 +222,13 @@ $nonce = wp_create_nonce('wazobiamail_admin_nonce');
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($dns_data['records'] as $record) : ?>
+                                <?php foreach ($dns_data['records'] as $wazobiamail_record) : ?>
                                     <tr>
-                                        <td><strong><?php echo esc_html(isset($record['recordType']) ? $record['recordType'] : $record['type']); ?></strong></td>
-                                        <td><code><?php echo esc_html(isset($record['name']) ? $record['name'] : $record['host']); ?></code></td>
-                                        <td style="word-break:break-all;"><code><?php echo esc_html(isset($record['value']) ? $record['value'] : $record['target']); ?></code></td>
+                                        <td><strong><?php echo esc_html(isset($wazobiamail_record['recordType']) ? $wazobiamail_record['recordType'] : $wazobiamail_record['type']); ?></strong></td>
+                                        <td><code><?php echo esc_html(isset($wazobiamail_record['name']) ? $wazobiamail_record['name'] : $wazobiamail_record['host']); ?></code></td>
+                                        <td style="word-break:break-all;"><code><?php echo esc_html(isset($wazobiamail_record['value']) ? $wazobiamail_record['value'] : $wazobiamail_record['target']); ?></code></td>
                                         <td>
-                                            <?php if (!empty($record['verified']) || (isset($record['status']) && $record['status'] === 'verified')) : ?>
+                                            <?php if (!empty($wazobiamail_record['verified']) || (isset($wazobiamail_record['status']) && $wazobiamail_record['status'] === 'verified')) : ?>
                                                 <span style="color:#00a32a; font-weight:600;">&#10003; <?php esc_html_e('Verified', 'wazobiamail-transactional-email-deliverability'); ?></span>
                                             <?php else : ?>
                                                 <span style="color:#dba617; font-weight:600;">&#9203; <?php esc_html_e('Pending', 'wazobiamail-transactional-email-deliverability'); ?></span>
@@ -234,7 +242,7 @@ $nonce = wp_create_nonce('wazobiamail_admin_nonce');
                 <?php endif; ?>
             </div>
 
-        <?php elseif ($active_tab === 'test') : ?>
+        <?php elseif ($wazobiamail_active_tab === 'test') : ?>
             <!-- Tab 3: Send Test Email -->
             <div class="card" style="margin-top:0;">
                 <h2><?php esc_html_e('Send a Test Email', 'wazobiamail-transactional-email-deliverability'); ?></h2>
@@ -265,7 +273,7 @@ $nonce = wp_create_nonce('wazobiamail_admin_nonce');
                 <div id="test-email-result" style="margin-top:15px; display:none;"></div>
             </div>
 
-        <?php elseif ($active_tab === 'logs') : ?>
+        <?php elseif ($wazobiamail_active_tab === 'logs') : ?>
             <!-- Tab 4: Delivery Logs & Receipts -->
             <div class="card" style="margin-top:0;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -291,17 +299,17 @@ $nonce = wp_create_nonce('wazobiamail_admin_nonce');
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($logs as $log) : ?>
+                                <?php foreach ($logs as $wazobiamail_log) : ?>
                                     <tr>
-                                        <td><?php echo esc_html($log['timestamp']); ?></td>
-                                        <td><?php echo esc_html($log['recipient']); ?></td>
-                                        <td><?php echo esc_html($log['subject']); ?></td>
-                                        <td><code><?php echo esc_html($log['tracking_id']); ?></code></td>
+                                        <td><?php echo esc_html($wazobiamail_log['timestamp']); ?></td>
+                                        <td><?php echo esc_html($wazobiamail_log['recipient']); ?></td>
+                                        <td><?php echo esc_html($wazobiamail_log['subject']); ?></td>
+                                        <td><code><?php echo esc_html($wazobiamail_log['tracking_id']); ?></code></td>
                                         <td>
-                                            <?php if ($log['status'] === 'queued' || $log['status'] === 'delivered') : ?>
-                                                <span style="color:#00a32a; font-weight:600;">&#10003; <?php echo esc_html(ucfirst($log['status'])); ?></span>
+                                            <?php if ($wazobiamail_log['status'] === 'queued' || $wazobiamail_log['status'] === 'delivered') : ?>
+                                                <span style="color:#00a32a; font-weight:600;">&#10003; <?php echo esc_html(ucfirst($wazobiamail_log['status'])); ?></span>
                                             <?php else : ?>
-                                                <span style="color:#d63638; font-weight:600;">&#9888; <?php echo esc_html(ucfirst($log['status'])); ?></span>
+                                                <span style="color:#d63638; font-weight:600;">&#9888; <?php echo esc_html(ucfirst($wazobiamail_log['status'])); ?></span>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
@@ -325,16 +333,31 @@ function toggleApiKeyVisibility() {
     }
 }
 
+function wazobiaRenderNotice(container, type, message, boldPrefix) {
+    container.textContent = '';
+    var notice = document.createElement('div');
+    notice.className = 'notice notice-' + type;
+    var p = document.createElement('p');
+    if (boldPrefix) {
+        var strong = document.createElement('strong');
+        strong.textContent = boldPrefix + ' ';
+        p.appendChild(strong);
+    }
+    p.appendChild(document.createTextNode(String(message || '')));
+    notice.appendChild(p);
+    container.appendChild(notice);
+}
+
 function handleRegisterDomain() {
     var btn = document.getElementById('btn-register-domain');
     var resDiv = document.getElementById('domain-action-result');
     btn.disabled = true;
     resDiv.style.display = 'block';
-    resDiv.innerHTML = '<div class="notice notice-info"><p><?php esc_html_e('Registering site domain with WazobiaMail API...', 'wazobiamail-transactional-email-deliverability'); ?></p></div>';
+    wazobiaRenderNotice(resDiv, 'info', '<?php echo esc_js(__('Registering site domain with WazobiaMail API...', 'wazobiamail-transactional-email-deliverability')); ?>');
 
     var data = new URLSearchParams();
     data.append('action', 'wazobiamail_register_domain');
-    data.append('nonce', '<?php echo esc_js($nonce); ?>');
+    data.append('nonce', '<?php echo esc_js($wazobiamail_nonce); ?>');
 
     fetch(ajaxurl, {
         method: 'POST',
@@ -345,15 +368,15 @@ function handleRegisterDomain() {
     .then(function(res) {
         btn.disabled = false;
         if (res.success) {
-            resDiv.innerHTML = '<div class="notice notice-success"><p>' + res.data.message + '</p></div>';
+            wazobiaRenderNotice(resDiv, 'success', res.data && res.data.message);
             setTimeout(function() { window.location.reload(); }, 1500);
         } else {
-            resDiv.innerHTML = '<div class="notice notice-error"><p>' + res.data + '</p></div>';
+            wazobiaRenderNotice(resDiv, 'error', res.data);
         }
     })
     .catch(function(err) {
         btn.disabled = false;
-        resDiv.innerHTML = '<div class="notice notice-error"><p>' + err.message + '</p></div>';
+        wazobiaRenderNotice(resDiv, 'error', err && err.message ? err.message : 'Request failed');
     });
 }
 
@@ -362,11 +385,11 @@ function handleVerifyDns() {
     var resDiv = document.getElementById('domain-action-result');
     btn.disabled = true;
     resDiv.style.display = 'block';
-    resDiv.innerHTML = '<div class="notice notice-info"><p><?php esc_html_e('Querying DNS verification...', 'wazobiamail-transactional-email-deliverability'); ?></p></div>';
+    wazobiaRenderNotice(resDiv, 'info', '<?php echo esc_js(__('Querying DNS verification...', 'wazobiamail-transactional-email-deliverability')); ?>');
 
     var data = new URLSearchParams();
     data.append('action', 'wazobiamail_verify_dns');
-    data.append('nonce', '<?php echo esc_js($nonce); ?>');
+    data.append('nonce', '<?php echo esc_js($wazobiamail_nonce); ?>');
 
     fetch(ajaxurl, {
         method: 'POST',
@@ -377,15 +400,15 @@ function handleVerifyDns() {
     .then(function(res) {
         btn.disabled = false;
         if (res.success) {
-            resDiv.innerHTML = '<div class="notice notice-success"><p>' + res.data.message + '</p></div>';
+            wazobiaRenderNotice(resDiv, 'success', res.data && res.data.message);
             setTimeout(function() { window.location.reload(); }, 1500);
         } else {
-            resDiv.innerHTML = '<div class="notice notice-error"><p>' + res.data + '</p></div>';
+            wazobiaRenderNotice(resDiv, 'error', res.data);
         }
     })
     .catch(function(err) {
         btn.disabled = false;
-        resDiv.innerHTML = '<div class="notice notice-error"><p>' + err.message + '</p></div>';
+        wazobiaRenderNotice(resDiv, 'error', err && err.message ? err.message : 'Request failed');
     });
 }
 
@@ -396,18 +419,18 @@ function handleSendTestEmail() {
     var email = document.getElementById('test_recipient').value;
 
     if (!email) {
-        alert('<?php esc_html_e('Please enter a recipient email address.', 'wazobiamail-transactional-email-deliverability'); ?>');
+        alert('<?php echo esc_js(__('Please enter a recipient email address.', 'wazobiamail-transactional-email-deliverability')); ?>');
         return;
     }
 
     btn.disabled = true;
     spinner.classList.add('is-active');
     resDiv.style.display = 'block';
-    resDiv.innerHTML = '<div class="notice notice-info"><p><?php esc_html_e('Dispatching test email via WazobiaMail REST API...', 'wazobiamail-transactional-email-deliverability'); ?></p></div>';
+    wazobiaRenderNotice(resDiv, 'info', '<?php echo esc_js(__('Dispatching test email via WazobiaMail REST API...', 'wazobiamail-transactional-email-deliverability')); ?>');
 
     var data = new URLSearchParams();
     data.append('action', 'wazobiamail_send_test_email');
-    data.append('nonce', '<?php echo esc_js($nonce); ?>');
+    data.append('nonce', '<?php echo esc_js($wazobiamail_nonce); ?>');
     data.append('recipient', email);
 
     fetch(ajaxurl, {
@@ -420,15 +443,15 @@ function handleSendTestEmail() {
         btn.disabled = false;
         spinner.classList.remove('is-active');
         if (res.success) {
-            resDiv.innerHTML = '<div class="notice notice-success"><p>' + res.data.message + '</p></div>';
+            wazobiaRenderNotice(resDiv, 'success', res.data && res.data.message);
         } else {
-            resDiv.innerHTML = '<div class="notice notice-error"><p><strong><?php esc_html_e('Failed:', 'wazobiamail-transactional-email-deliverability'); ?></strong> ' + res.data + '</p></div>';
+            wazobiaRenderNotice(resDiv, 'error', res.data, '<?php echo esc_js(__('Failed:', 'wazobiamail-transactional-email-deliverability')); ?>');
         }
     })
     .catch(function(err) {
         btn.disabled = false;
         spinner.classList.remove('is-active');
-        resDiv.innerHTML = '<div class="notice notice-error"><p>' + err.message + '</p></div>';
+        wazobiaRenderNotice(resDiv, 'error', err && err.message ? err.message : 'Request failed');
     });
 }
 
@@ -439,7 +462,7 @@ function handleClearLogs() {
 
     var data = new URLSearchParams();
     data.append('action', 'wazobiamail_clear_logs');
-    data.append('nonce', '<?php echo esc_js($nonce); ?>');
+    data.append('nonce', '<?php echo esc_js($wazobiamail_nonce); ?>');
 
     fetch(ajaxurl, {
         method: 'POST',
